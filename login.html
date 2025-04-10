@@ -3,21 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login – Operation Eiserner Vorhang</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com;">
+  <title>Login / Registrieren – Operation Eiserner Vorhang</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+    header {
+      background-color: #1a1a1a;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      height: 50px;
+    }
+    nav a {
+      color: #48aaff;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 20px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(72,170,255,0.2);
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #222;
+      color: #eee;
+      border: 1px solid #444;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #48aaff;
+      border: none;
+      padding: 10px;
+      color: #000;
+      font-weight: bold;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3399dd;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .toggle-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .form-container {
+      display: none;
+    }
+    #login-form {
+      display: block;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Operation Eiserner Vorhang</h1>
+    <img src="logo.png" alt="Operation Eiserner Vorhang Logo" class="logo">
+    <nav>
+      <a href="index.html">Start</a>
+      <a href="regelwerk.html">Regelwerk</a>
+      <a href="forum.html">Forum</a>
+      <a href="login.html">Login / Registrieren</a>
+    </nav>
   </header>
 
   <main>
-    <!-- Login Form -->
+    <!-- Login / Registrierung Toggle -->
     <div id="login-form" class="form-container">
       <h2>Login</h2>
-      <input type="email" placeholder="E-Mail" id="login-email" required>
-      <input type="password" placeholder="Passwort" id="login-pass" required>
+      <input type="email" placeholder="E-Mail" id="login-email">
+      <input type="password" placeholder="Passwort" id="login-pass">
       <button onclick="loginUser()">Anmelden</button>
 
       <div class="toggle-link">
@@ -25,12 +107,11 @@
       </div>
     </div>
 
-    <!-- Register Form -->
-    <div id="register-form" class="form-container" style="display:none;">
+    <div id="register-form" class="form-container">
       <h2>Registrieren</h2>
-      <input type="text" placeholder="Benutzername" id="reg-username" required>
-      <input type="email" placeholder="E-Mail" id="reg-email" required>
-      <input type="password" placeholder="Passwort" id="reg-pass" required>
+      <input type="text" placeholder="Benutzername" id="reg-username">
+      <input type="email" placeholder="E-Mail" id="reg-email">
+      <input type="password" placeholder="Passwort" id="reg-pass">
       <button onclick="registerUser()">Registrieren</button>
 
       <div class="toggle-link">
@@ -43,27 +124,9 @@
     <small>&copy; 2025 Operation Eiserner Vorhang</small>
   </footer>
 
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
-    authDomain: "operationeisernervorhang.firebaseapp.com",
-    projectId: "operationeisernervorhang",
-    storageBucket: "operationeisernervorhang.firebasestorage.app",
-    messagingSenderId: "81577152546",
-    appId: "1:81577152546:web:07996222f001cf1b10ba7b"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-
-    // Function to toggle between login and register forms
+  <!-- Normales Script für die UI-Funktionen -->
+  <script>
+    // Funktion zum Umschalten zwischen Login und Registrierung
     function toggleForm() {
       const loginForm = document.getElementById('login-form');
       const registerForm = document.getElementById('register-form');
@@ -76,42 +139,90 @@
         registerForm.style.display = 'block';
       }
     }
+  </script>
 
-    // Register function
+  <!-- Supabase SDK importieren -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
+      authDomain: "operationeisernervorhang.firebaseapp.com",
+      projectId: "operationeisernervorhang",
+      storageBucket: "operationeisernervorhang.firebasestorage.app",
+      messagingSenderId: "81577152546",
+      appId: "1:81577152546:web:07996222f001cf1b10ba7b"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+
+    // Funktion zum Registrieren eines Benutzers
     window.registerUser = async function() {
       const username = document.getElementById('reg-username').value.trim();
       const email = document.getElementById('reg-email').value.trim();
       const password = document.getElementById('reg-pass').value.trim();
 
-      try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        alert('Registrierung erfolgreich!');
-        
-        // Save username and email to the user's profile (Optional)
-        await user.updateProfile({ displayName: username });
-        toggleForm();  // Show login form after successful registration
-      } catch (error) {
-        console.error("Error during registration:", error);
-        alert("Fehler: " + error.message);
+      if (!email || !password || !username) {
+        alert('Bitte alles ausfüllen.');
+        return;
       }
-    }
 
-    // Login function
+      if (password.length < 6) {
+        alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
+        return;
+      }
+
+      try {
+        const { user, session, error } = await supabase.auth.signUp({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          alert('Fehler bei der Registrierung: ' + error.message);
+        } else {
+          alert('Registrierung erfolgreich!');
+          
+          // Benutzerdaten in der Supabase-Datenbank speichern (optional)
+          await supabase
+            .from('users')
+            .insert([
+              { username: username, email: email, user_id: user.id }
+            ]);
+
+          // Formular umschalten
+          toggleForm();
+        }
+      } catch (error) {
+        console.error('Fehler:', error);
+        alert('Fehler: ' + error.message);
+      }
+    };
+
+    // Funktion zum Einloggen eines Benutzers
     window.loginUser = async function() {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value.trim();
 
-      try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+      const { user, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        console.error("Fehler:", error);
+        alert("Anmeldung fehlgeschlagen: " + error.message);
+      } else {
         alert('Login erfolgreich!');
-        window.location.href = 'index.html';  // Redirect after successful login
-      } catch (error) {
-        console.error("Error during login:", error);
-        alert("Fehler: " + error.message);
+        window.location.href = 'index.html'; // Weiterleitung nach dem Login
       }
-    }
+    };
   </script>
 </body>
 </html>
