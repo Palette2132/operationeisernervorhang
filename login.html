@@ -66,7 +66,7 @@
     function toggleForm() {
       const loginForm = document.getElementById('login-form');
       const registerForm = document.getElementById('register-form');
-
+      
       if (loginForm.style.display === 'none') {
         loginForm.style.display = 'block';
         registerForm.style.display = 'none';
@@ -77,10 +77,10 @@
     }
 
     // Register function
-    async function registerUser() {
+    window.registerUser = async function() {
+      const username = document.getElementById('reg-username').value.trim();
       const email = document.getElementById('reg-email').value.trim();
       const password = document.getElementById('reg-pass').value.trim();
-      const username = document.getElementById('reg-username').value.trim();
 
       try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
@@ -97,7 +97,7 @@
     }
 
     // Login function
-    async function loginUser() {
+    window.loginUser = async function() {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value.trim();
 
