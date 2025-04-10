@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benutzerverwaltung – Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+    header {
+      background-color: #1a1a1a;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      height: 50px;
+    }
+    nav a {
+      color: #48aaff;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #444;
+    }
+    select, button {
+      background-color: #222;
+      color: #eee;
+      border: 1px solid #444;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" class="logo">
+    <nav>
+      <a href="index.html">Start</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="forum.html">Forum</a>
+      <a href="user-manager.html">Benutzer</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Benutzerverwaltung</h2>
+    <div id="admin-panel"></div>
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>Benutzername</th>
+          <th>Rolle</th>
+          <th>Ändern</th>
+          <th>Löschen</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <footer>
+    <small>&copy; 2025 Operation Eiserner Vorhang</small>
+  </footer>
+
+  <script>
+    const db = getFirestore();
+    const usersCollection = collection(db, "users");
+
+    // Wenn der Benutzer kein Admin oder Owner ist, den Zugriff verweigern
+    const currentUser = JSON.parse(localStorage.getItem('oev_user'));
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'owner')) {
+      document.getElementById('admin-panel').innerHTML = '<p>Zugriff verweigert.</p>';
+    } else {
+      // Daten aus Firestore holen und anzeigen
+      getDocs(usersCollection).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const user = doc.data();
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.role}</td>
+            <td>
+              <select onchange="changeRole('${doc.id}', this.value)">
+                <option value="user">User</option>
+                <option value="mod">Mod</option>
+                <option value="admin">Admin</option>
+                <option value="owner">Owner</option>
+              </select>
+            </td>
+            <td><button onclick="deleteUser('${doc.id}')">Löschen</button></td>
+          `;
+          row.querySelector('select').value = user.role;
+          document.querySelector('tbody').appendChild(row);
+        });
+      });
+    }
+
+    // Rollen ändern
+    function changeRole(userId, newRole) {
+      const userRef = doc(db, "users", userId);
+      updateDoc(userRef, {
+        role: newRole
+      }).then(() => {
+        alert('Rolle erfolgreich geändert!');
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+
+    // Benutzer löschen
+    function deleteUser(userId) {
+      const userRef = doc(db, "users", userId);
+      deleteDoc(userRef).then(() => {
+        alert('Benutzer erfolgreich gelöscht!');
+        location.reload();
+      }).catch((error) => {
+        console.error(error);
+      });
+    }
+  </script>
+</body>
+</html>

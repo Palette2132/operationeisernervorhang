@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regelwerk – Operation Eiserner Vorhang</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+    header {
+      background-color: #1a1a1a;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      height: 50px;
+    }
+    nav a {
+      color: #48aaff;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px;
+    }
+    h1 {
+      color: #48aaff;
+    }
+    section {
+      margin-bottom: 30px;
+    }
+    footer {
+      background-color: #1a1a1a;
+      text-align: center;
+      padding: 10px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Operation Eiserner Vorhang Logo" class="logo">
+    <nav>
+      <a href="index.html">Start</a>
+      <a href="regelwerk.html">Regelwerk</a>
+      <a href="forum.html">Forum</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Regelwerk</h1>
+    <div id="regelwerk-content">
+      <p><i>Lade Regelwerk...</i></p>
+    </div>
+  </main>
+
+  <footer>
+    <small>&copy; 2025 Operation Eiserner Vorhang</small>
+  </footer>
+
+  <script>
+    // Platzhalter für zukünftigen dynamischen Inhalt (z. B. aus DB oder JSON)
+    document.getElementById("regelwerk-content").innerHTML = `
+      <section>
+        <h2>§1 Account</h2>
+        <ul>
+          <li>1.1 Der Spielername ist realistisch zu gestalten.</li>
+          <li>1.2 Multiaccounting ist verboten.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>§2 Allgemeine Regeln</h2>
+        <ul>
+          <li>2.1 Verhalten im RP hat realitätsnah zu sein.</li>
+          <li>2.2 Metagaming ist untersagt.</li>
+        </ul>
+      </section>
+    `;
+  </script>
+</body>
+</html>
