@@ -141,14 +141,13 @@
     }
   </script>
 
-  <!-- Supabase SDK importieren -->
+  <!-- Firebase SDK importieren -->
   <script type="module">
-    // Import the functions you need from the SDKs you need
+    // Firebase SDK importieren
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+    // Firebase Konfiguration
     const firebaseConfig = {
       apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
       authDomain: "operationeisernervorhang.firebaseapp.com",
@@ -157,12 +156,12 @@
       messagingSenderId: "81577152546",
       appId: "1:81577152546:web:07996222f001cf1b10ba7b"
     };
-  
-    // Initialize Firebase
+
+    // Firebase App und Auth initialisieren
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-
-    // Funktion zum Registrieren eines Benutzers
+    // Funktion zur Registrierung
     window.registerUser = async function() {
       const username = document.getElementById('reg-username').value.trim();
       const email = document.getElementById('reg-email').value.trim();
@@ -179,48 +178,32 @@
       }
 
       try {
-        const { user, session, error } = await supabase.auth.signUp({
-          email: email,
-          password: password
-        });
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-        if (error) {
-          alert('Fehler bei der Registrierung: ' + error.message);
-        } else {
-          alert('Registrierung erfolgreich!');
-          
-          // Benutzerdaten in der Supabase-Datenbank speichern (optional)
-          await supabase
-            .from('users')
-            .insert([
-              { username: username, email: email, user_id: user.id }
-            ]);
+        // Benutzername in Firebase speichern (optional)
+        await user.updateProfile({ displayName: username });
 
-          // Formular umschalten
-          toggleForm();
-        }
+        alert('Registrierung erfolgreich!');
+        toggleForm(); // Formular umschalten, damit der Login-Bereich angezeigt wird
       } catch (error) {
-        console.error('Fehler:', error);
-        alert('Fehler: ' + error.message);
+        console.error("Fehler bei der Registrierung:", error);
+        alert("Fehler: " + error.message);
       }
     };
 
-    // Funktion zum Einloggen eines Benutzers
+    // Funktion für den Login
     window.loginUser = async function() {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value.trim();
 
-      const { user, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
-      if (error) {
-        console.error("Fehler:", error);
-        alert("Anmeldung fehlgeschlagen: " + error.message);
-      } else {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
         alert('Login erfolgreich!');
-        window.location.href = 'index.html'; // Weiterleitung nach dem Login
+        window.location.href = 'index.html'; // Weiterleitung nach erfolgreichem Login
+      } catch (error) {
+        console.error("Fehler beim Login:", error);
+        alert("Fehler: " + error.message);
       }
     };
   </script>
