@@ -147,72 +147,50 @@
 
   <!-- Supabase SDK importieren -->
   <script type="module">
-    import { createClient } from 'https://cdn.supabase.io/js/supabase.js';
-
-    // Deine Supabase-URL und API-Key
-    const supabase = createClient('https://xyzcompany.supabase.co', 'public-anon-key');
-
     // Funktion zum Registrieren eines Benutzers
-    window.registerUser = async function() {
-      const username = document.getElementById('reg-username').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const password = document.getElementById('reg-pass').value.trim();
+// Firebase Config (deine Firebase-Projekt-Konfiguration)
+const firebaseConfig = {
+  apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
+  authDomain: "operationeisernervorhang.firebaseapp.com",
+  projectId: "operationeisernervorhang",
+  storageBucket: "operationeisernervorhang.firebasestorage.app",
+  messagingSenderId: "81577152546",
+  appId: "1:81577152546:web:07996222f001cf1b10ba7b"
+};
 
-      if (!email || !password || !username) {
-        alert('Bitte alles ausfüllen.');
-        return;
-      }
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-      if (password.length < 6) {
-        alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
-        return;
-      }
+// Funktion für die Registrierung
+function registerUser() {
+  const email = document.getElementById("reg-email").value;
+  const password = document.getElementById("reg-pass").value;
+  
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Erstelle den neuen Benutzer
+      alert('Registrierung erfolgreich!');
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+}
 
-      try {
-        const { user, session, error } = await supabase.auth.signUp({
-          email: email,
-          password: password
-        });
+// Funktion für das Login
+function loginUser() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-pass").value;
+  
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Erfolgreiches Login
+      alert('Login erfolgreich!');
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+}
 
-        if (error) {
-          alert('Fehler bei der Registrierung: ' + error.message);
-        } else {
-          alert('Registrierung erfolgreich!');
-          
-          // Benutzerdaten in der Supabase-Datenbank speichern (optional)
-          await supabase
-            .from('users')
-            .insert([
-              { username: username, email: email, user_id: user.id }
-            ]);
-
-          // Formular umschalten
-          toggleForm();
-        }
-      } catch (error) {
-        console.error('Fehler:', error);
-        alert('Fehler: ' + error.message);
-      }
-    };
-
-    // Funktion zum Einloggen eines Benutzers
-    window.loginUser = async function() {
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-pass').value.trim();
-
-      const { user, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
-      if (error) {
-        console.error("Fehler:", error);
-        alert("Anmeldung fehlgeschlagen: " + error.message);
-      } else {
-        alert('Login erfolgreich!');
-        window.location.href = 'index.html'; // Weiterleitung nach dem Login
-      }
-    };
   </script>
 </body>
 </html>
