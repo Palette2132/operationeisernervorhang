@@ -3,107 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login / Registrieren – Operation Eiserner Vorhang</title>
-  <meta http-equiv="Content-Security-Policy" 
-        content="default-src 'self'; connect-src 'self' https://*.supabase.io https://*.gstatic.com;
-                 script-src 'self' https://cdn.supabase.io 'unsafe-inline';
-                 style-src 'self' 'unsafe-inline';">
+  <title>Login – Operation Eiserner Vorhang</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com;">
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      background-color: #111;
-      color: #eee;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-    }
-    header {
-      background-color: #1a1a1a;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo {
-      height: 50px;
-    }
-    nav a {
-      color: #48aaff;
-      text-decoration: none;
-      margin-left: 20px;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    main {
-      max-width: 400px;
-      margin: 60px auto;
-      padding: 20px;
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(72,170,255,0.2);
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      background-color: #222;
-      color: #eee;
-      border: 1px solid #444;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #48aaff;
-      border: none;
-      padding: 10px;
-      color: #000;
-      font-weight: bold;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #3399dd;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-    }
-    .error-message {
-      color: red;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    .toggle-link {
-      text-align: center;
-      margin-top: 10px;
-    }
-    .form-container {
-      display: none;
-    }
-    #login-form {
-      display: block;
-    }
-  </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Operation Eiserner Vorhang Logo" class="logo">
-    <nav>
-      <a href="index.html">Start</a>
-      <a href="regelwerk.html">Regelwerk</a>
-      <a href="forum.html">Forum</a>
-      <a href="login.html">Login / Registrieren</a>
-    </nav>
+    <h1>Operation Eiserner Vorhang</h1>
   </header>
 
   <main>
-    <!-- Login / Registrierung Toggle -->
+    <!-- Login Form -->
     <div id="login-form" class="form-container">
       <h2>Login</h2>
-      <input type="email" placeholder="E-Mail" id="login-email">
-      <input type="password" placeholder="Passwort" id="login-pass">
+      <input type="email" placeholder="E-Mail" id="login-email" required>
+      <input type="password" placeholder="Passwort" id="login-pass" required>
       <button onclick="loginUser()">Anmelden</button>
 
       <div class="toggle-link">
@@ -111,11 +25,12 @@
       </div>
     </div>
 
-    <div id="register-form" class="form-container">
+    <!-- Register Form -->
+    <div id="register-form" class="form-container" style="display:none;">
       <h2>Registrieren</h2>
-      <input type="text" placeholder="Benutzername" id="reg-username">
-      <input type="email" placeholder="E-Mail" id="reg-email">
-      <input type="password" placeholder="Passwort" id="reg-pass">
+      <input type="text" placeholder="Benutzername" id="reg-username" required>
+      <input type="email" placeholder="E-Mail" id="reg-email" required>
+      <input type="password" placeholder="Passwort" id="reg-pass" required>
       <button onclick="registerUser()">Registrieren</button>
 
       <div class="toggle-link">
@@ -128,13 +43,30 @@
     <small>&copy; 2025 Operation Eiserner Vorhang</small>
   </footer>
 
-  <!-- Normales Script für die UI-Funktionen -->
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+
   <script>
-    // Funktion zum Umschalten zwischen Login und Registrierung
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
+      authDomain: "operationeisernervorhang.firebaseapp.com",
+      projectId: "operationeisernervorhang",
+      storageBucket: "operationeisernervorhang.firebasestorage.app",
+      messagingSenderId: "81577152546",
+      appId: "1:81577152546:web:07996222f001cf1b10ba7b"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Function to toggle between login and register forms
     function toggleForm() {
       const loginForm = document.getElementById('login-form');
       const registerForm = document.getElementById('register-form');
-      
+
       if (loginForm.style.display === 'none') {
         loginForm.style.display = 'block';
         registerForm.style.display = 'none';
@@ -143,54 +75,42 @@
         registerForm.style.display = 'block';
       }
     }
-  </script>
 
-  <!-- Supabase SDK importieren -->
-  <script type="module">
-    // Funktion zum Registrieren eines Benutzers
-// Firebase Config (deine Firebase-Projekt-Konfiguration)
-const firebaseConfig = {
-  apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
-  authDomain: "operationeisernervorhang.firebaseapp.com",
-  projectId: "operationeisernervorhang",
-  storageBucket: "operationeisernervorhang.firebasestorage.app",
-  messagingSenderId: "81577152546",
-  appId: "1:81577152546:web:07996222f001cf1b10ba7b"
-};
+    // Register function
+    async function registerUser() {
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-pass').value.trim();
+      const username = document.getElementById('reg-username').value.trim();
 
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        alert('Registrierung erfolgreich!');
+        
+        // Save username and email to the user's profile (Optional)
+        await user.updateProfile({ displayName: username });
+        toggleForm();  // Show login form after successful registration
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("Fehler: " + error.message);
+      }
+    }
 
-// Funktion für die Registrierung
-function registerUser() {
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-pass").value;
-  
-  auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Erstelle den neuen Benutzer
-      alert('Registrierung erfolgreich!');
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
+    // Login function
+    async function loginUser() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-pass').value.trim();
 
-// Funktion für das Login
-function loginUser() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-pass").value;
-  
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Erfolgreiches Login
-      alert('Login erfolgreich!');
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-}
-
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        alert('Login erfolgreich!');
+        window.location.href = 'index.html';  // Redirect after successful login
+      } catch (error) {
+        console.error("Error during login:", error);
+        alert("Fehler: " + error.message);
+      }
+    }
   </script>
 </body>
 </html>
