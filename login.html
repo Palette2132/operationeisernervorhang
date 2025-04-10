@@ -194,22 +194,47 @@
     const auth = getAuth(app);
 
     // Funktion zur Registrierung
-    window.registerUser = async function() {
-      const username = document.getElementById('reg-username').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const password = document.getElementById('reg-pass').value.trim();
+// Funktion zum Registrieren eines Benutzers
+window.registerUser = async function() {
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-pass').value.trim();
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await user.updateProfile({ displayName: username });
-        alert('Registrierung erfolgreich!');
-        toggleForm();
-      } catch (error) {
-        console.error("Fehler bei der Registrierung:", error);
-        alert("Fehler: " + error.message);
-      }
-    };
+  if (!email || !password || !username) {
+    alert('Bitte alles ausfüllen.');
+    return;
+  }
+
+  if (password.length < 6) {
+    alert('Das Passwort muss mindestens 6 Zeichen lang sein.');
+    return;
+  }
+
+  try {
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    // Benutzernamen in Firebase speichern
+    await updateProfile(user, {
+      displayName: username
+    });
+
+    // Benutzerdaten in Firestore speichern
+    const db = firebase.firestore();
+    await db.collection('users').doc(user.uid).set({
+      email: email,
+      username: username,
+      role: 'user', // Hier kannst du auch eine andere Rolle setzen
+    });
+
+    alert('Registrierung erfolgreich!');
+    toggleForm();  // Formular umschalten
+  } catch (error) {
+    console.error("Fehler bei der Registrierung:", error);
+    alert("Fehler: " + error.message);
+  }
+};
+
 
     // Funktion zum Login
     window.loginUser = async function() {
