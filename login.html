@@ -43,24 +43,25 @@
     <small>&copy; 2025 Operation Eiserner Vorhang</small>
   </footer>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
-      authDomain: "operationeisernervorhang.firebaseapp.com",
-      projectId: "operationeisernervorhang",
-      storageBucket: "operationeisernervorhang.firebasestorage.app",
-      messagingSenderId: "81577152546",
-      appId: "1:81577152546:web:07996222f001cf1b10ba7b"
-    };
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDfPEvyPyWgoVJwC8ibsGv6bls-C4LJLl8",
+    authDomain: "operationeisernervorhang.firebaseapp.com",
+    projectId: "operationeisernervorhang",
+    storageBucket: "operationeisernervorhang.firebasestorage.app",
+    messagingSenderId: "81577152546",
+    appId: "1:81577152546:web:07996222f001cf1b10ba7b"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
 
     // Function to toggle between login and register forms
     function toggleForm() {
